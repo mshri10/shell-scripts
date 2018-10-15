@@ -1,0 +1,39 @@
+#!/bin/bash
+set -v
+ls -lrt /usr/local/ |egrep -i "tomcat60|70" | awk '{print $9}' > tomcat_list
+for i in `cat /home/prognocis/tomcat_list`
+do
+        NEWNAME="`sed -n 's/'$'\r''//;s/,/ /g;s/list.available.poolnames=//gp' /usr/local/$i/webapps/prognocis/WEB-INF/classes/db.properties`"
+        for j in $NEWNAME
+        do
+                mkdir /home/prognocis/shark/$i
+                cp -rvp /usr/local/$i/webapps/prognocis/tmpimage/$j.gif /home/prognocis/shark/$i/
+        done
+done
+
+
+
+	
+
+#!/bin/bash
+LIST="`cat tomcat_list`"
+NEWNAME="`sed -n 's/'$'\r''//;s/,/ /g;s/list.available.poolnames=//gp' /usr/local/$LIST/webapps/prognocis/WEB-INF/classes/db.properties`"
+for NEWNAME in $NEWNAME;
+do
+#       echo "--------------------------------"
+#       echo "* HOST Master Tomcats Status: $LIST "
+#       echo "--------------------------------"
+#       mkdir /home/prognocis/shark/$LIST
+    cp -rvp /usr/local/$LIST/webapps/prognocis/tmpimage/$NEWNAME.gif /home/prognocis/shark/$LIST
+done
+
+
+5 1 * * 6 /bizmatics/vishu/tmpimage.sh >/dev/null 2>&1
+
+mkdir /DATA/tmpimage_backup
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+centos=6
+OS=`cat /etc/redhat-release | awk {'print $3'}`
+OS1=${OS%%.*}
+if  (($centos >= $OS1))
+        then
+        echo "error"
+        else
+        echo "Passed"
+fi
+

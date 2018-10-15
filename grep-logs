@@ -1,0 +1,11 @@
+#First execute below command
+#for i in `ll | grep access_log- | awk -F "-" '{print $9}'` ; do . log_hist.sh $i  ; done
+DT=$1
+echo "DATE = $DT" >> log_history
+echo " HOUR / Hits " >> log_history
+for (( a=0; a < 24; a++ )); do
+     PV_DT=`cat scm.justbuylive.in-access_log-$DT | grep -v "dummy\|302" |  head -1 | awk -F ":" '{print $1}' | awk -F "[" '{print $2}'`
+
+        count=`cat scm.justbuylive.in-access_log-$DT | grep -v "HTTP\/1.0\" 302\|dummy" | grep "$PV_DT:$a" | wc -l`
+        echo " $a / $count" >> log_history
+done

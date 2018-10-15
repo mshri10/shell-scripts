@@ -1,0 +1,34 @@
+#!/bin/bash
+set -v
+for a in `cat server.txt`
+do
+echo "===============================$a==================================="
+ssh root@$a
+mv /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class-25082015
+sshpass -p 'b1zmat1cs@' scp -rvp root@192.168.1.22:/usr/local/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class
+chown prognocis.prognocis /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class
+echo "===============================END $a==================================="
+done
+
+
+
+
+
+for a in `cat bizserver_list`
+do
+echo "===============================$a==================================="
+cat /usr/local/shrikant.sh | ssh root@$a /bin/bash
+echo "================END=================================================="
+done
+
+
+vi shrikant.sh
+
+ls -ld  /usr/local/tomcat70* | awk '{print $9}' | cut -d'/' -f4 > tomcat_name
+#sshpass -p 'b1zmat1cs@' scp -rvp root@192.168.1.22:/usr/local/tomcat_init /usr/local/
+for a in `cat tomcat_name`
+do
+cp /etc/init.d/$a /etc/init.d/$a-17082015
+/bin/cp -rv /usr/local/tomcat_init /etc/init.d/$a
+sed -i 's/tomcat70LB1/'$a'/g' /etc/init.d/$a
+done

@@ -1,0 +1,10 @@
+diskcheck() {
+if [ $SPACE -gt 55 ]
+then
+        exit
+        echo "Free disk space on server is less than 55%"|mailx -s "SVN repo Backup" balasaheb.gopale@justbuylive.com
+
+fi
+}
+SPACE=`df -h | grep /dev/xvda1 | awk '{print $5}' | sed 's/%//'`
+diskcheck

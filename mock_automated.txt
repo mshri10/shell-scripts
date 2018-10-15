@@ -1,0 +1,44 @@
+date=$(date +%d-%m-%Y)
+
+date2=$(date +%d%m%Y)
+
+aws s3 ls jbldb-backup-nv/mysqldump/justbuylive.$date.gz
+
+OUT=$(echo $?)
+echo $OUT
+
+if [ $OUT == 0 ]; then
+        echo Restore Process start
+
+                cd /mysql_data/data/
+
+                aws s3 cp s3://jbldb-backup-nv/mysqldump/justbuylive.$date.gz .
+
+                gunzip justbuylive.$date.gz
+
+                mysql -u root -proot -e "create database justbuylivemock_$date2"
+
+                mysql -u root -proot justbuylivemock_$date2 < justbuylive.$date
+
+                mysql -u root -proot "justbuylivemock_$date2" < /home/paragd/Mock_revised.sql
+
+                mysqldump -u root -proot "justbuylivemock_$date2" | gzip -9 > justbuymock$date2.sql.gz
+
+                mysqldump -u root -proot "justbuylivemock_$date2" "tbl_scm_order_tracker" --no-create-info | gzip -9 > justbuyorder_$date2.sql
+.gz
+
+                aws s3 mv /mysql_data/data/justbuymock$date2.sql.gz s3://jbldb-backup-nv/share_and_mock/
+
+                aws s3 mv /mysql_data/data/justbuyorder_$date2.sql.gz s3://jbldb-backup-nv/share_and_mock/
+
+                rm -rf justbuylive.$date
+
+                rm -rf justbuylivemock_$date2.sql.gz
+
+                rm -rf justbuyorder_$date2.sql.gz
+
+
+else
+        echo Restore Process break
+
+fi

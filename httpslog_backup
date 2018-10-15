@@ -1,0 +1,84 @@
+#!/bin/bash
+####################
+
+IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+AWSCLI=/usr/bin/aws
+DT=`date +%Y%m%d --date="1 days ago`
+
+$AWSCLI s3 cp /var/www/httpd/$DT s3://nv-httpd-logs-backup/$IP/$DT
+
+
+
+
+
+
+httpd logs backup -one day back
+
+
+
+IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+DT=`date +%Y%m%d`
+cd /var/log/httpd
+/usr/bin/aws s3 sync /var/log/httpd/*.gz s3://nv-httpd-logs-backup/$IP/$DT
+
+
+
+
+aws s3 cp /var/log/httpd/ s3://nv-httpd-logs-backup/$IP/$DT  --recursive --exclude "*" --include "*.gz"
+
+`
+#!/bin/bash
+IP=`/sbin/ifconfig eth0 | grep 'inet ' | cut -d: -f2 | awk '{ print $2}'`
+
+echo $IP
+DT=`date +%Y%m%d --date="1 days ago`
+echo $DT
+ls -lrt /var/log/httpd/ | grep -i $DT | awk {'print $9'} > /var/log/httpd/loglist.txt
+for i in `cat /var/log/httpd/loglist.txt`
+do
+aws s3 cp /var/log/httpd/$i s3://nv-httpd-logs-backup/$IP/$DT  --recursive --exclude "*" --include "*.gz"
+done
+
+
+#!/bin/bash
+IP=`/sbin/ifconfig eth0 | grep 'inet ' | cut -d: -f2 | awk '{ print $1}'`
+
+DT=`date +%Y%m%d --date="1 days ago"`
+
+ls -lrt /var/log/ | grep -i .log | awk {'print $9'} > /var/log/loglist.txt
+for i in $(cat /var/log/loglist.txt);
+do
+aws s3 cp /var/log/httpd/$i s3://nv-httpd-logs-backup/$IP/$DT/ 
+done
+
+
+/root/scripts/httplogbackup.sh
+15 05 * * * /bin/bash /root/scripts/httplogbackup.sh >> /var/log/cron 2>&1
+
+
+
+
+
+
+$config['payment_gateway'] = 'ccavenue';
+
+
+[root@nv-api 1.9.3.11]# svn up
+U    application/helpers/product_helper.php
+U    application/models/Order_model.php
+U    application/controllers/Order.php
+A    application/controllers/ApiSetting.php
+ U   .
+Updated to revision 4131.
+
+$config['payment_gateway'] = 'Citrus';
+
+
+[root@nv-api 1.9.3.10]# svn up
+U    application/helpers/product_helper.php
+U    application/models/Order_model.php
+A    application/controllers/ApiSetting.php
+U    application/controllers/Order.php
+ U   .
+Updated to revision 4131.
+[root@nv-api 1.9.3.10]# 

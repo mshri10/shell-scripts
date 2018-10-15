@@ -1,0 +1,31 @@
+!/bin/sh
+
+#Setting up the environment
+
+
+# Shell script for Mail alert
+
+# -------------------------------------------------------------------------
+
+### Start of the script
+echo "[`date +%Y\-%m\-%d\ %H\:%M\:%S`] [INFO] Start of the script."
+
+proclist=`ps -ef | grep "$1" | grep -v "grep" | wc -l`
+
+if [ $proclist -lt 150 ]
+then
+
+echo "OK: Mail to nobody."
+
+elif [ $proclist -gt 150 ] && [ $proclist -lt 200 ]
+then
+
+echo "Warning: Mail to Infra."
+
+else
+
+echo "Critical : Mail to all."
+
+fi
+
+echo "[`date +%Y\-%m\-%d\ %H\:%M\:%S`] [INFO] End of the script."

@@ -1,0 +1,25 @@
+
+#!/bin/bash
+set -v
+for a in `cat list`
+do
+echo "Checking Disk Space for $a"
+echo "############Disk Space of $a######################" >> diskspace.txt
+sshpass -f password.txt /usr/bin/ssh prognocis@$a df -kh  | grep "^/dev" | awk '{print $1, $4, $6}' >> diskspace.txt
+echo "##################################" >> diskspace.txt
+#mail -s "Disk Space: " shrikant.m@bizmaticsinc.com < diskspace.txt
+done
+mail -s "Disk Space: " tghadi@bizmaticsinc.com < diskspace.txt
+
+
+
+#!/bin/bash
+M=$(df -kh | awk '{print $6}')
+I=/AWSBKP/DATA
+if ["$M" != "$I" ]
+then
+mount $I
+else
+echo " $I already mounted"
+fi
+exit 0

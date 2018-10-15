@@ -1,0 +1,28 @@
+#set -v
+CENT_CUR_VERS=$(cat /etc/redhat-release  | awk -F "." '{print $1}')
+CENT_VERS_7="CentOS Linux release 7"
+CENT_VERS_6="CentOS release 6"
+if [ "$CENT_CUR_VERS" == "$CENT_VERS_7" ] ; then
+        IP=$(ifconfig  | grep broadcast | awk '{print $2}')
+elif [ "$CENT_CUR_VERS" == "$CENT_VERS_6" ] ; then
+        IP=$(ifconfig  |  grep "Bcast\:" | awk '{print $2}' | awk -F ":" '{print $2}')
+else
+        echo Current Os is not Centos. This script work only on centos
+        exit
+fi
+md5sum -c  /home/webmaster/config.md5  > /home/webmaster/report1
+cat /home/webmaster/report1 | grep FAILED | awk -F ":" '{print $1}' > /home/webmaster/report2
+if [ -s  "/home/webmaster/report2" ]; then
+for i in `cat /home/webmaster/report2`
+do
+	DT=`date +%d:%m:%Y:%R`
+	aws s3 cp $i s3://nv-config-file-backup/$IP/
+	echo "$i $DT" >> /home/webmaster/config_mod_logs
+done
+> /home/webmaster/config.md5
+for i in `cat /home/webmaster/filelist`; do md5sum $i >> /home/webmaster/config.md5 ; done
+rm -rf /home/webmaster/report1
+rm -rf /home/webmaster/report2
+fi
+#set +v
+##############################################################

@@ -1,0 +1,12 @@
+
+#!/bin/bash
+LIST="`cat tomcat-list`"
+NEWNAME="`cat /usr/local/$LIST/webapps/prognocis/WEB-INF/classes/db.properties | grep -i list | sed -e 's/\list.available.poolnames=//g' -e 's/,/ /g'`"
+for NEWNAME in $NEWNAME
+do
+echo "--------------------------------"
+echo "* HOST Master Tomcats Status: $tomcat "
+echo "--------------------------------"
+mkdir /home/prognocis/test1/$LIST
+cp -rvp /usr/local/$LIST/webapps/prognocis/tmpimage/$NEWNAME.gif /home/prognocis/test1/$LIST/
+done

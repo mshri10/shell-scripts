@@ -1,0 +1,35 @@
+#!/bin/bash
+
+for a in `cat server_list`
+do
+
+ssh @$a
+#mv /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class-25082015
+scp -rvp prognocis@$a:/bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/
+
+
+done
+
+sshpass -p 'pr0gn0c1s' scp -rvp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null 
+
+
+for a in `cat server_list`
+do
+cat /home/prognocis/shrikant.sh | ssh prognocis@$a /bin/bash
+done
+
+
+#!/bin/bash
+set -v
+for a in `cat server.txt`
+do
+echo "===============================$a==================================="
+ssh root@$a
+mv /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class-25082015
+sshpass -p 'b1zmat1cs@' scp -rvp root@192.168.1.22:/usr/local/UpgradeAction.class /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class
+chown prognocis.prognocis /bizmatics/Prognocisrepo/clientside/com/prognocis/repo/UpgradeAction.class
+echo "===============================END $a==================================="
+done
+
+
+bizserv20

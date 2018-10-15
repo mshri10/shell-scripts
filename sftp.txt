@@ -1,0 +1,5 @@
+useradd -d /sftponly/sanjivjain/Interface/Avutox-Atlas -s /sbin/nologin sanjivjain
+
+usermod -aG sftponly sanjivjain
+usermod -aG prognocis sanjivjain
+

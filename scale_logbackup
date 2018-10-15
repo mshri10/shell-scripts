@@ -1,0 +1,48 @@
+## This script sync previous day's scalar logs to s3 bucket name jbl-scalearc-logs and also keeps only last 7 days worth of logs on local server
+
+#!/bin/bash
+set -v
+mkdir -p /root/logs-report_scalarc-log_sync
+
+rm -rf /root/logs-report_scalarc-log_sync/*
+
+{
+ 
+AWSCLI=/usr/bin/aws
+path=`date +%Y%m%d --date="1 days ago"`
+cd /home/saloguser
+# $AWSCLI s3 sync $path s3://jbl-scalearc-logs/$path/
+$AWSCLI s3 sync /home/saloguser/ s3://jbl-scalearc-logs/
+sleep 10
+
+## now cleaning logs older than 7 days
+
+mkdir -p /root/old_saloguser/
+
+find /home/saloguser -maxdepth 1 -mtime +7 -type d -exec mv "{}" /root/old_saloguser/ \;
+
+sleep 35
+
+rm -rf /root/old_saloguser/*
+
+sleep 10
+
+} > /root/logs-report_scalarc-log_sync/report_scalarc-log_sync.txt
+
+
+=============================================================================
+
+
+set -v
+AWSCLI=/usr/bin/aws
+
+dt=`date +%Y%m%d`
+
+mkdir /home/masterweb/configbkp/$dt
+
+/usr/bin/mv /home/masterweb/configbkp/*-$dt.zip /home/masterweb/configbkp/$dt
+
+sleep 5
+
+$AWSCLI s3 sync /home/masterweb/configbkp/$dt/ s3://config-file-backup/$dt/
+rm -rf /home/masterweb/configbkp/$dt

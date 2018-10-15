@@ -1,0 +1,45 @@
+cp /home/prognocis/prod/tomcat_restartsc.sh /home/prognocis/prod/tomcat_restartsc.sh_14082015
+sed -e '/sudo/!b' -e 's/^/#/' -i /home/prognocis/prod/tomcat_restartsc.sh
+sed -i '33i echo `$2 stop`' /home/prognocis/prod/tomcat_restartsc.sh
+sed -i '56i echo `$2 start`' /home/prognocis/prod/tomcat_restartsc.sh
+
+
+
+sed -n '/sudo/ =' /home/prognocis/prod/tomcat_restartsc.sh
+
+
+
+
+for a in `cat bizserver_list`
+do
+echo "===============================$a==================================="
+cat /usr/local/shri1 | ssh root@$a /bin/bash
+echo "================END=================================================="
+done
+
+
+
+for a in `cat bizserver_list`
+do
+echo "===============================$a==================================="
+cat /usr/local/shri.sh | ssh root@$a /bin/bash
+echo "================END=================================================="
+done
+
+
+vi shri.sh
+
+ls -ld  /usr/local/tomcat70* | awk '{print $9}' | cut -d'/' -f4 > tomcat_name
+#sshpass -p 'b1zmat1cs@' scp -rvp root@192.168.1.22:/usr/local/tomcat_init /usr/local/
+for a in `cat tomcat_name`
+do
+cp /etc/init.d/$a /etc/init.d/$a-17082015
+/bin/cp -rv /usr/local/tomcat_init /etc/init.d/$a
+sed -i 's/tomcat70LB1/'$a'/g' /etc/init.d/$a
+done
+~
+
+
+vi shri1
+sed -n '/sudo/ =' /home/prognocis/prod/tomcat_restartsc.sh
+

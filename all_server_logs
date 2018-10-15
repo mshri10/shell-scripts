@@ -1,0 +1,41 @@
+#!/bin/bash
+set -v
+apachepath=/usr/local/apache2416
+tomcatlist=`ls -lrt /usr/local/ | grep -i tomcat70 | grep -v grep | awk {'print $9'} > /tmp/tomcatlist`
+securepath=/var/log
+dt=`date \+\%F`
+securedt=`date \+\%Y\%m\%d`
+#securedt=20151213
+host=`hostname`
+###############################
+# creating directory for logs #
+###############################
+mkdir -p /tmp/$host-logs/$host-$dt/$dt-apache2416
+mkdir -p /tmp/$host-logs/$host-$dt/$dt-tomcats
+
+####################
+# copy apache logs #
+####################
+
+rsync -larzvp $apachepath/logs/*$dt* /tmp/$host-logs/$host-$dt/$dt-apache2416
+
+###
+# Tomcat logs
+#
+
+for tomcat in `cat /tmp/tomcatlist`
+do
+rsync -lrpavz /usr/local/$tomcat/logs/*$dt*.gz /tmp/$host-logs/$host-$dt/$dt-tomcats
+done
+
+##
+# Secure Logs
+#
+
+rsync -lrazvp /var/log/secure-$securedt*.gz /tmp/$host-logs/$host-$dt/
+
+##
+# Zipping logs
+#
+
+zip -r /tmp/$host-logs/$host-$dt.zip /tmp/$host-logs/$host-$dt

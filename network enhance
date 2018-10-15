@@ -1,0 +1,49 @@
+You should follow this step-by-step guide to install and enable enhanced networking on CentOS 6.7 versions.
+
+1) Update the OS.
+
+sudo yum update -y
+sudo reboot
+
+2) Install required packages.
+
+sudo yum install gcc kernel-devel-$(uname -r)
+
+3) Install DKMS support.
+
+sudo wget http://linux.dell.com/dkms/permalink/dkms-2.2.0.3-1.noarch.rpm
+sudo rpm -ivh dkms-2.2.0.3-1.noarch.rpm
+
+4) Download and prepare DKMS for ixgbevf drivers.
+
+sudo wget https://sourceforge.net/projects/e1000/files/ixgbevf%20stable/2.16.4/ixgbevf-2.16.4.tar.gz/download
+sudo tar -xzvf download
+sudo mv ixgbevf-2.16.4 /usr/src/
+
+sudo vim /usr/src/ixgbevf-2.16.4/dkms.conf (Check the attachment for example.)
+
+5) Build and install drivers using DKMS.
+
+sudo dkms add -m ixgbevf -v 2.16.4
+sudo dkms build -m ixgbevf -v 2.16.4
+sudo dkms install -m ixgbevf -v 2.16.4
+sudo depmod
+
+6) Backup and re-create initramfs image.
+
+sudo cp -p /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r).img.bak
+sudo dracut -f
+
+7) Remove the udev persistent rule file. (If present, will force udev to rename the device name and the instance won't be accessible.)
+
+mv /etc/udev/rules.d/70-persistent-net.rules /backup_folder/
+
+8) Enable enhanced networking for the instance (Note: instance has to be in stopped state).
+
+aws ec2 modify-instance-attribute --instance-id <INSTANCE> --sriov-net-support simple --region <REGION>
+
+9) Networking card eth0 should use the Intel driver (ixgbevf) if the procedure was successful.
+
+ethtool -i eth0
+
+I hope this will be sufficient for you.

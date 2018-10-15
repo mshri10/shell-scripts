@@ -1,0 +1,20 @@
+To give access with  htpasswd:--->
+
+
+Below directive have added into httpd.conf
+
+<Location /test>
+    AuthType Basic
+    AuthName "Authentication required"
+    AuthUserfile "/usr/local/logaccess/htpasswd1.users"
+    Require valid-user
+    Order allow,deny
+    Allow from all
+Satisfy all
+</Location>
+
+
+URL: https://nwfm.prognocis.com
+
+username: shrikant
+passwd : x
